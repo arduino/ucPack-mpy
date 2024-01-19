@@ -1,8 +1,7 @@
 {
     "urls": [
       ["ucPack/__init__.py", "github:arduino/ucPack-mpy/ucPack/__init__.py"],
-      ["ucPack/CircularBuffer.py", "github:arduino/ucPack-mpy/ucPack/CircularBuffer.py"],
-      ["ucPack/ucPack.py", "github:arduino/ucPack-mpy/ucPack/ucPack.py"]
+      ["ucPack/CircularBuffer.py", "github:arduino/ucPack-mpy/ucPack/CircularBuffer.py"]
     ],
     "deps": [
     ],
