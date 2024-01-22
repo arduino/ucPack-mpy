@@ -554,7 +554,7 @@ class ucPack:
 
     def unpacketC1B3F(self) -> (int, int, float, float, float):
         """
-        Unpackets the payload expecting a command code and two floats
+        Unpackets the payload expecting a command code one byte and three floats
         :return: code, b, f1, f2, f3
         """
 
@@ -564,6 +564,39 @@ class ucPack:
         f2 = struct.unpack("f", self.payload[6:10])[0]
         f3 = struct.unpack("f", self.payload[10:14])[0]
         return code, b, f1, f2, f3
+
+    def packetC2B1F(self, code: int, b1: int, b2: int, f: float) -> int:
+        """
+        Packets the bytes b1 and b2 and the float f with command code + start and end indexes
+        :param code:
+        :param b1:
+        :param b2:
+        :param f:
+        :return: returns the size of the resulting msg array
+        """
+
+        self.msg[0] = self.start_index & 0xFF
+        self.msg[1] = 7
+        self.msg[2] = code & 0xFF
+        self.msg[3] = b1 & 0xFF
+        self.msg[4] = b2 & 0xFF
+        self.msg[5:9] = bytearray(struct.pack("f", f))
+        self.msg[9] = self.end_index & 0xFF
+        self.msg[10] = self.crc8(self.msg[2:9])
+        self.msg_size = 11
+        return self.msg_size
+
+    def unpacketC2B1F(self) -> (int, int, int, float):
+        """
+        Unpackets the payload expecting a command code and two floats
+        :return: code, b1, b2, f
+        """
+
+        code = self.payload[0]
+        b1 = self.payload[1]
+        b2 = self.payload[2]
+        f = struct.unpack("f", self.payload[3:7])[0]
+        return code, b1, b2, f
 
 
 if __name__ == "__main__":
