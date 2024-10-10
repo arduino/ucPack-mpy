@@ -245,7 +245,7 @@ class ucPack:
         """
 
         self.msg[0] = self.start_index & 0xFF
-        self.msg[1] = 5
+        self.msg[1] = 7
         self.msg[2] = code & 0xFF
         self.msg[3:5] = bytearray(struct.pack("h", i1 & 0xFFFF))
         self.msg[5:7] = bytearray(struct.pack("h", i2 & 0xFFFF))
