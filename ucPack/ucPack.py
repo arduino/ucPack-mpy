@@ -106,7 +106,7 @@ class ucPack:
 
     def unpacketC1B(self) -> (int, int):
         """
-        Unpackets the payload expecting a command code and one byte
+        Unpacks the payload expecting a command code and one byte
         :return: code and byte
         """
 
@@ -135,7 +135,7 @@ class ucPack:
 
     def unpacketC2B(self) -> (int, int, int):
         """
-        Unpackets the payload expecting a command code and two bytes
+        Unpacks the payload expecting a command code and two bytes
         :return: code and bytes
         """
 
@@ -167,7 +167,7 @@ class ucPack:
 
     def unpacketC3B(self) -> (int, int, int, int):
         """
-        Unpackets the payload expecting a command code and three bytes
+        Unpacks the payload expecting a command code and three bytes
         :return: code and bytes
         """
 
@@ -196,7 +196,7 @@ class ucPack:
 
     def unpacketC1I(self) -> (int, int):
         """
-        Unpackets the payload expecting a command code and one byte
+        Unpacks the payload expecting a command code and one int
         :return: code and int
         """
 
@@ -225,7 +225,7 @@ class ucPack:
 
     def unpacketC2I(self) -> (int, int, int):
         """
-        Unpackets the payload expecting a command code and one byte
+        Unpacks the payload expecting a command code and two int
         :return: code and ints
         """
 
@@ -257,7 +257,7 @@ class ucPack:
 
     def unpacketC3I(self) -> (int, int, int, int):
         """
-        Unpackets the payload expecting a command code and one byte
+        Unpacks the payload expecting a command code and three int
         :return: code and ints
         """
 
@@ -298,7 +298,7 @@ class ucPack:
 
     def unpacketC7I(self) -> (int, int, int, int, int, int, int, int):
         """
-        Unpackets the payload expecting a command code and one byte
+        Unpacks the payload expecting a command code and 7 integers
         :return: code and ints
         """
 
@@ -311,6 +311,40 @@ class ucPack:
         i6 = struct.unpack("h", self.payload[11:13])[0]
         i7 = struct.unpack("h", self.payload[13:15])[0]
         return code, i1, i2, i3, i4, i5, i6, i7
+
+    def packetC64I(self, code: int, data: list[int]) -> int:
+        """
+        Packets the ints with command code + start and end indexes
+        :param code:
+        :param data: 64 integers of data
+        :return: returns the size of the resulting msg array
+        """
+
+        self.msg[0] = self.start_index & 0xFF
+        self.msg[1] = 129
+        self.msg[2] = code & 0xFF
+        for i, d in enumerate(data):
+            start_idx = i*2 + 3
+            end_idx = start_idx + 2
+            self.msg[start_idx:end_idx] = bytearray(struct.pack("h", d & 0xFFFF))
+        self.msg[131] = self.end_index & 0xFF
+        self.msg[132] = self.crc8(self.msg[2:131])
+        self.msg_size = 133
+        return self.msg_size
+
+    def unpacketC64I(self) -> (int, list[int]):
+        """
+        Unpacks the payload expecting a command code and 64 integers
+        :return: code and ints
+        """
+
+        code = self.payload[0]
+        data = []
+        for i in range(64):
+            start_idx = i*2 + 1
+            end_idx = start_idx + 2
+            data.append(struct.unpack("h", self.payload[start_idx:end_idx])[0])
+        return code, data
 
     def packetC1F(self, code: int, f: float) -> int:
         """
@@ -331,7 +365,7 @@ class ucPack:
 
     def unpacketC1F(self) -> (int, float):
         """
-        Unpackets the payload expecting a command code and one float
+        Unpacks the payload expecting a command code and one float
         :return: code and float number
         """
 
@@ -360,7 +394,7 @@ class ucPack:
 
     def unpacketC2F(self) -> (int, float, float):
         """
-        Unpackets the payload expecting a command code and two floats
+        Unpacks the payload expecting a command code and two floats
         :return: code, f1, f2
         """
 
@@ -392,7 +426,7 @@ class ucPack:
 
     def unpacketC3F(self) -> (int, float, float, float):
         """
-        Unpackets the payload expecting a command code and two floats
+        Unpacks the payload expecting a command code and three floats
         :return: code, f1, f2, f3
         """
 
@@ -427,7 +461,7 @@ class ucPack:
 
     def unpacketC4F(self) -> (int, float, float, float, float):
         """
-        Unpackets the payload expecting a command code and 4 floats
+        Unpacks the payload expecting a command code and 4 floats
         :return: code, f1, f2, f3, f4
         """
 
@@ -467,7 +501,7 @@ class ucPack:
 
     def unpacketC6F(self) -> (int, float, float, float, float):
         """
-        Unpackets the payload expecting a command code and 4 floats
+        Unpacks the payload expecting a command code and 6 floats
         :return: code, f1, f2, f3, f4
         """
 
@@ -514,7 +548,7 @@ class ucPack:
 
     def unpacketC8F(self) -> (int, float, float, float, float, float, float, float, float):
         """
-        Unpackets the payload expecting a command code and 8 floats
+        Unpacks the payload expecting a command code and 8 floats
         :return: code, f1, f2, f3, f4, f5, f6, f7, f8
         """
 
@@ -554,7 +588,7 @@ class ucPack:
 
     def unpacketC1B3F(self) -> (int, int, float, float, float):
         """
-        Unpackets the payload expecting a command code one byte and three floats
+        Unpacks the payload expecting a command code one byte and three floats
         :return: code, b, f1, f2, f3
         """
 
@@ -588,7 +622,7 @@ class ucPack:
 
     def unpacketC2B1F(self) -> (int, int, int, float):
         """
-        Unpackets the payload expecting a command code and two floats
+        Unpacks the payload expecting a command code two bytes and one float
         :return: code, b1, b2, f
         """
 
